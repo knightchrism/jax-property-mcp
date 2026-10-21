@@ -6,6 +6,7 @@ An MCP server and AI agent for Jacksonville (Duval County) property data, from 4
 - `search_properties`: properties in a ZIP within a value range
 - `property_details`: full assessor record for one parcel
 - `zip_stats`: count, median, average and max value for a ZIP
+- `flood_risk(strap)`: FEMA flood zones touching a parcel, whether each one is high-risk (SFHA), and what percent of the lot it covers. Data comes from FEMA's National Flood Hazard Layer, loaded by `load_flood.py` with completeness and geometry-repair checks (12,288 of 12,288 zones loaded, 0 lost).
 
 ## Agent
 `agent.py` connects to the server over stdio and runs a tool-calling loop with a local model (qwen3:30b on Ollama), at no API cost. The same server also works in VS Code Copilot through `.vscode/mcp.json`.
