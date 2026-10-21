@@ -32,3 +32,9 @@ Every loader keeps the raw data, builds a cleaned table, and logs exactly what c
 | Home types | 100% of 405k properties mapped to a type via Florida DOR land use codes |
 
 See [DATA_SOURCES.md](DATA_SOURCES.md) for sources, licensing, and disclaimers.
+
+## Data Pipeline (dbt)
+
+![dbt lineage](docs/dbt_lineage.png)
+
+Raw Duval County and Florida DOR data is cleaned in tested dbt staging models (`stg_addresses`, `stg_sales`) and joined into one row per parcel (`property_summary`, 405,722 parcels). 13 data tests run on every `dbt build`. The project lives in `jax_dbt/`.

@@ -5,3 +5,8 @@ __pycache__/
 inspect_db.py
 load_flood.v*.bak.py
 cols.py
+
+jax_dbt/target/
+jax_dbt/logs/
+jax_dbt/dbt_packages/
+logs/

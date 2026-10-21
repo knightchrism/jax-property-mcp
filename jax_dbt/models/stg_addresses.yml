@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: stg_addresses
+    columns:
+      - name: address_id
+        data_tests:
+          - unique
+          - not_null
+      - name: strap
+        data_tests:
+          - not_null
+      - name: zip5
+        data_tests:
+          - not_null

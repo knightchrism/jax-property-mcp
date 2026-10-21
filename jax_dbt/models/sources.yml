@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: public
+    tables:
+      - name: property_addresses
+      - name: properties
+      - name: sales
+      - name: property_use_types

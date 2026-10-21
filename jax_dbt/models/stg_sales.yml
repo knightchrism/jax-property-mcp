@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_sales
+    description: >-
+      Staged sales records. Known exception: 6 observed sales across 4 property IDs
+      have no matching raw address record. Preserve these sales and use left joins
+      for address enrichment. The relationship test remains warning severity.
+      See docs/data-quality.md for investigation and follow-up; the observed count
+      is not an approved tolerance.
+    columns:
+      - name: strap
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_addresses')
+                field: strap
+              config:
+                severity: warn
+      - name: price
+        data_tests:
+          - not_null
+      - name: sale_month
+        data_tests:
+          - not_null
+

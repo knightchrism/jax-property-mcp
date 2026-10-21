@@ -64,8 +64,27 @@ def search_properties(
 
 @mcp.tool()
 def property_details(strap: str) -> list[dict]:
-    """Full assessor details for one property by its strap (parcel ID from search_properties)."""
+    """Full assessor details for one property by its strap (parcel ID from search_properties).
+
+    Returns parcel info and VALUES: assessed_value (taxable), total_just_value (market value).
+    This tool has NO sale history. Never describe these values as a sale price.
+    For sales, call recent_sales.
+    """
     return run("SELECT * FROM properties WHERE strap = %s", (strap,))
+
+
+@mcp.tool()
+def sale_history(strap: str) -> list[dict]:
+    """All recorded sales for one property by its strap (parcel ID).
+
+    Use this for 'what did X sell for' or 'last sale' questions.
+    Returns an empty list if the property has no recorded sales.
+    """
+    return run(
+        "SELECT sale_month, price, qualified, qual_cd FROM sales "
+        "WHERE strap = %s ORDER BY sale_month DESC",
+        (strap,),
+    )
 
 
 @mcp.tool()

@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: property_summary
+    columns:
+      - name: strap
+        data_tests:
+          - unique
+          - not_null
