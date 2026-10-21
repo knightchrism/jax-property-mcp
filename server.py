@@ -78,5 +78,26 @@ def flood_risk(strap: str) -> list[dict]:
     return run(sql, (strap,))
 
 
+@mcp.tool()
+def recent_sales(
+    zip_code: str, qualified_only: bool = True, limit: int = 20
+) -> list[dict]:
+    """Recent property sales (Jan 2025 onward) in a ZIP code, newest first.
+    qualified_only=True keeps only real market (arm's-length) sales and skips $100 family transfers.
+    sale_month is the first day of the month the sale happened in."""
+    return run(
+        """
+        SELECT s.strap,
+               concat_ws(' ', a.site_number, a.site_prefix, a.site_street, a.site_type, a.site_unit) AS address,
+               s.sale_month, s.price, s.qualified
+        FROM sales s
+        JOIN (SELECT DISTINCT ON (strap) * FROM property_addresses ORDER BY strap, address_id) a USING (strap)
+        WHERE a.site_zip LIKE %s AND (s.qualified OR NOT %s)
+        ORDER BY s.sale_month DESC, s.price DESC
+        LIMIT %s""",
+        (zip_code + "%", qualified_only, min(limit, 50)),
+    )
+
+
 if __name__ == "__main__":
     mcp.run()
