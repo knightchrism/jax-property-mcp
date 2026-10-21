@@ -20,3 +20,15 @@ python -m venv .venv; .venv\Scripts\activate
 pip install -r requirements.txt
 python agent.py "Rank 32207, 32210 and 32205 by median value"
 ```
+## Data Quality
+
+Every loader keeps the raw data, builds a cleaned table, and logs exactly what changed, so no row is silently lost.
+
+| Dataset | Result |
+|---|---|
+| FEMA flood zones | 12,288 of 12,288 loaded; 48 invalid shapes repaired with 0 sq ft area lost |
+| FL DOR sales | 75,878 of 75,878 loaded; 99.8% matched to a parcel; 28,800 qualified market sales |
+| Addresses | 10,552 exact duplicates removed (each traced in `addresses_qc`); ZIPs normalized from 413 values to 37 |
+| Home types | 100% of 405k properties mapped to a type via Florida DOR land use codes |
+
+See [DATA_SOURCES.md](DATA_SOURCES.md) for sources, licensing, and disclaimers.
