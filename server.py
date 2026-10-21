@@ -60,5 +60,23 @@ def zip_stats(zip_code: str) -> list[dict]:
     )
 
 
+@mcp.tool()
+def flood_risk(strap: str) -> list[dict]:
+    """FEMA flood zones touching a parcel, given its strap (property ID).
+    Returns each zone, whether it's a high-risk Special Flood Hazard Area (sfha = 'True'),
+    and what percent of the parcel it covers. No rows means the parcel is outside the mapped zones."""
+    sql = """
+        SELECT f.fld_zone, f.zone_subty, f.sfha, f.static_bfe,
+               ROUND((100 * SUM(ST_Area(ST_Intersection(p.geometry, f.geom)))
+                     / NULLIF(ST_Area(ST_Union(p.geometry)), 0))::numeric, 1) AS pct_of_parcel
+        FROM parcels p
+        JOIN flood_zones f ON ST_Intersects(p.geometry, f.geom)
+        WHERE p.strap = %s
+        GROUP BY f.fld_zone, f.zone_subty, f.sfha, f.static_bfe
+        ORDER BY pct_of_parcel DESC
+    """
+    return run(sql, (strap,))
+
+
 if __name__ == "__main__":
     mcp.run()

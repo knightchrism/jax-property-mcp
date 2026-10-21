@@ -3,3 +3,5 @@ __pycache__/
 .env
 *.bak.py
 inspect_db.py
+load_flood.v*.bak.py
+cols.py
