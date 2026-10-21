@@ -1,0 +1,11 @@
+{
+    "servers": {
+        "jax-property": {
+            "type": "stdio",
+            "command": "C:\\Users\\knigh\\mcp-agent\\.venv\\Scripts\\python.exe",
+            "args": [
+                "C:\\Users\\knigh\\mcp-agent\\server.py"
+            ]
+        }
+    }
+}
