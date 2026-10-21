@@ -1,4 +1,4 @@
-import subprocess, sys, time
+import os, subprocess, sys, time
 
 # (question, tool the agent SHOULD call, or None if it should decline)
 TESTS = [
@@ -12,21 +12,30 @@ TESTS = [
     ("What's the weather in Jacksonville today?", None),
 ]
 
-passed = 0
-for q, expected in TESTS:
-    t = time.time()
-    out = subprocess.run(
-        [sys.executable, "agent.py", q], capture_output=True, text=True
-    ).stdout
-    called = [
-        l.split("calling ")[1].split("(")[0]
-        for l in out.splitlines()
-        if "-> calling" in l
-    ]
-    ok = (expected in called) if expected else not called
-    passed += ok
-    print(
-        f"{'PASS' if ok else 'FAIL'}  {time.time() - t:5.1f}s  {q}\n      expected={expected} called={called}"
-    )
+MODELS = ["qwen3:30b", "qwen3.6:27b", "qwen3.8:27b", "qwen3-coder:30b"]
 
-print(f"\n{passed}/{len(TESTS)} passed")
+summary = []
+for m in MODELS:
+    env = {**os.environ, "AGENT_MODEL": m}  # tells agent.py which model to use
+    passed, total_t = 0, 0
+    print(f"\n=== {m} ===")
+    for q, expected in TESTS:
+        t = time.time()
+        out = subprocess.run(
+            [sys.executable, "agent.py", q], capture_output=True, text=True, env=env
+        ).stdout
+        dt = time.time() - t
+        total_t += dt
+        called = [
+            l.split("calling ")[1].split("(")[0]
+            for l in out.splitlines()
+            if "-> calling" in l
+        ]
+        ok = (expected in called) if expected else not called
+        passed += ok
+        print(f"{'PASS' if ok else 'FAIL'}  {dt:5.1f}s  {q}  called={called}")
+    summary.append((m, passed, total_t / len(TESTS)))
+
+print("\n=== SUMMARY ===")
+for m, p, avg in summary:
+    print(f"{m:18} {p}/{len(TESTS)} passed   avg {avg:5.1f}s per question")
