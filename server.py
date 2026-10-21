@@ -24,17 +24,41 @@ def run(sql: str, params: tuple) -> list[dict]:
 
 @mcp.tool()
 def search_properties(
-    zip_code: str, min_value: float = 0, max_value: float = 1e12, limit: int = 10
+    zip_code: str,
+    min_value: int = 0,
+    max_value: int = 100_000_000,
+    home_type: str = "",
+    exclude_high_flood_risk: bool = False,
+    limit: int = 20,
 ) -> list[dict]:
-    """Find Jacksonville properties in a ZIP code (e.g. '32207') within a just-value range in dollars."""
+    """Find properties in a ZIP code by assessed value.
+    home_type filters by type, e.g. 'Single Family', 'Condominium', 'Mobile Home' (partial match OK).
+    exclude_high_flood_risk=True skips parcels touching a FEMA high-risk zone (SFHA)."""
     return run(
         """
-        SELECT p.strap, a.site_number || ' ' || a.site_street || ' ' || coalesce(a.site_type,'') AS address,
-               a.site_zip, p.total_just_value, p.property_use_code, p.documented_acres
-        FROM properties p JOIN (SELECT DISTINCT ON (strap) * FROM property_addresses ORDER BY strap, address_id) a USING (strap)
-        WHERE a.site_zip LIKE %s AND p.total_just_value BETWEEN %s AND %s
-        ORDER BY p.total_just_value DESC LIMIT %s""",
-        (zip_code + "%", min_value, max_value, min(limit, 50)),
+        SELECT p.strap,
+               concat_ws(' ', a.site_number, a.site_prefix, a.site_street, a.site_type, a.site_unit) AS address,
+               a.zip5, t.home_type, p.total_just_value
+        FROM properties p
+        JOIN (SELECT DISTINCT ON (strap) * FROM addresses_clean ORDER BY strap, address_id) a USING (strap)
+        LEFT JOIN property_use_types t ON t.prefix = left(p.property_use_code, 2)
+        WHERE a.zip5 = left(%s, 5)
+          AND p.total_just_value BETWEEN %s AND %s
+          AND (%s = '' OR t.home_type ILIKE '%%' || %s || '%%')
+          AND (NOT %s OR NOT EXISTS (
+                SELECT 1 FROM parcels pc JOIN flood_zones f ON ST_Intersects(pc.geometry, f.geom)
+                WHERE pc.strap = p.strap AND f.sfha = 'True'))
+        ORDER BY p.total_just_value DESC
+        LIMIT %s""",
+        (
+            zip_code,
+            min_value,
+            max_value,
+            home_type,
+            home_type,
+            exclude_high_flood_risk,
+            min(limit, 50),
+        ),
     )
 
 
