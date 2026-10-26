@@ -3,7 +3,9 @@ import psycopg
 from dotenv import load_dotenv
 from mcp.server.mcpserver import MCPServer
 
-load_dotenv(r"C:\Users\knigh\OneDrive\SNHU_Classes\jax-property-intelligence\.env")
+# DB credentials: a local .env (gitignored), or point JAX_ENV_FILE at another one,
+# e.g. C:\dev\jax-property-intelligence\.env. Keep projects out of OneDrive.
+load_dotenv(os.environ.get("JAX_ENV_FILE") or None)
 DSN = (
     f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASSWORD']}"
     f"@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
