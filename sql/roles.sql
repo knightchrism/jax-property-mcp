@@ -24,7 +24,7 @@ RESET jax.reader_pw;
 
 -- Nobody but the owners creates objects in public (PostgreSQL < 15 grants CREATE to PUBLIC by default).
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
-GRANT CONNECT ON DATABASE jax_property TO jax_loader, jax_reader;
+DO $$BEGIN EXECUTE format('GRANT CONNECT ON DATABASE %I TO jax_loader, jax_reader', current_database()); END$$;
 GRANT USAGE, CREATE ON SCHEMA public TO jax_loader;
 GRANT USAGE ON SCHEMA public TO jax_reader;
 
