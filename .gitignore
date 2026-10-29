@@ -10,3 +10,22 @@ jax_dbt/target/
 jax_dbt/logs/
 jax_dbt/dbt_packages/
 logs/
+
+# Security hardening: secrets, keys and local data
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+credentials*.json
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.db
+*.dump
+*.sql.gz
+/data/
+.pytest_cache/
