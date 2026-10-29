@@ -1,5 +1,7 @@
 # Jax Property MCP
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/knightchrism/jax-property-mcp/badge)](https://scorecard.dev/viewer/?uri=github.com/knightchrism/jax-property-mcp)
+
 **Ask plain-English questions about Jacksonville property, flood risk and sales &mdash; answered by a local AI agent through tested MCP tools over PostGIS.**
 
 <p>
@@ -52,14 +54,20 @@ cd C:\dev
 git clone https://github.com/knightchrism/jax-property-mcp.git
 cd jax-property-mcp
 python -m venv .venv; .venv\Scripts\activate
-pip install -r requirements.txt requests   # loaders also need requests
-copy .env.example .env        # fill in DB_* (or set JAX_ENV_FILE to an existing .env)
+pip install -r requirements-loaders.txt   # pinned; includes requirements.txt + requests for the loaders
+# one-time, as a superuser: least-privilege roles (jax_loader rebuilds tables, jax_reader is SELECT-only)
+psql -U postgres -d jax_property -v ON_ERROR_STOP=1 -v loader_password=<strong-pw-1> -v reader_password=<strong-pw-2> -f sql/roles.sql
+copy .env.example .env        # DB_USER=jax_reader + its password (or set JAX_ENV_FILE to an existing .env)
+$env:DB_USER='jax_loader'; $env:DB_PASSWORD='<strong-pw-1>'   # loaders write; env vars override .env
 python load_flood.py          # FEMA flood zones
 python load_sales.py          # FL DOR sales
 python clean_addresses.py     # logged address cleanup (addresses_qc)
 python home_types.py          # DOR land-use → home type
+Remove-Item Env:DB_USER, Env:DB_PASSWORD   # back to the read-only jax_reader from .env
 python agent.py "Rank 32207, 32210 and 32205 by median value"
 ```
+
+The MCP server and agent only ever need `jax_reader` (SELECT-only, `default_transaction_read_only`, 30 s statement timeout); keep the `postgres` superuser out of `.env`.
 
 dbt models live in `jax_dbt/` (`dbt build` runs the 13 data tests; needs a `dbt-postgres` profile).
 
