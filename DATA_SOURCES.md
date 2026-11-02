@@ -1,7 +1,7 @@
 
 # Data Sources
 
-This project's code is MIT licensed (see LICENSE). No data is stored in this repo;
+This project's code is proprietary: Copyright (c) 2026 GeoKnight GIS. All rights reserved (see LICENSE). No data is stored in this repo;
 loader scripts download public records directly from the sources below.
 
 | Data                           | Source                                                                           | Loader                         |

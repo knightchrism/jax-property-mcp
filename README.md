@@ -5,7 +5,7 @@
 **Ask plain-English questions about Jacksonville property, flood risk and sales &mdash; answered by a local AI agent through tested MCP tools over PostGIS.**
 
 <p>
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-00e5ff?style=flat-square"></a>
+  <a href="LICENSE"><img alt="License: All rights reserved" src="https://img.shields.io/badge/license-All%20rights%20reserved-00e5ff?style=flat-square"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3-00e5ff?style=flat-square&logo=python&logoColor=white">
   <img alt="PostGIS" src="https://img.shields.io/badge/PostgreSQL-PostGIS-0b1220?style=flat-square&logo=postgresql">
   <img alt="dbt" src="https://img.shields.io/badge/dbt-tested%20models-0b1220?style=flat-square&logo=dbt">
@@ -104,4 +104,4 @@ Data: FEMA National Flood Hazard Layer (public domain), Florida Department of Re
 
 ## License
 
-Code: MIT, see [LICENSE](LICENSE).
+Copyright (c) 2026 GeoKnight GIS. All rights reserved. No copying or reuse without written permission; see [LICENSE](LICENSE). Third-party libraries and data keep their own licenses and terms (listed in [LICENSE](LICENSE)).
